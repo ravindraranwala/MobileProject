@@ -1,4 +1,4 @@
 MobileProject
 =============
 
-Context Arare Mobile App using Android.
+Context Aware Mobile Application using Android.
