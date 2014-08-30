@@ -38,7 +38,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_LOCATIONS + "("
 				+ KEY_ID + " INTEGER PRIMARY KEY," + KEY_LATITUDE + " REAL,"
 				+ KEY_LONGITUDE + " REAL," + KEY_CITY + " TEXT," + KEY_IMAGE
-				+ " BLOB," + ")";
+				+ " BLOB" + ")";
 		db.execSQL(CREATE_CONTACTS_TABLE);
 
 	}
@@ -54,27 +54,41 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	}
 
 	/**
+	 * Drops the Locations table from the DB.
+	 */
+	public void dropTable() {
+		// Drop older table if existed
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATIONS);
+	}
+
+	public void createTable() {
+		SQLiteDatabase db = this.getWritableDatabase();
+		String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_LOCATIONS + "("
+				+ KEY_ID + " INTEGER PRIMARY KEY," + KEY_LATITUDE + " REAL,"
+				+ KEY_LONGITUDE + " REAL," + KEY_CITY + " TEXT," + KEY_IMAGE
+				+ " BLOB" + ")";
+		db.execSQL(CREATE_CONTACTS_TABLE);
+	}
+
+	/**
 	 * Adding new location
 	 * 
 	 * @param location
 	 *            A new location to be added.
 	 */
 	public void addLocation(final GeographicLocation location) {
-		SQLiteDatabase db = null;
-		try {
-			db = this.getWritableDatabase();
-			ContentValues values = new ContentValues();
-			values.put(KEY_LATITUDE, location.getLatitude());
-			values.put(KEY_LONGITUDE, location.getLongitude());
-			values.put(KEY_CITY, location.getCity());
-			values.put(KEY_IMAGE, location.getImage());
 
-			// Inserting Row
-			db.insert(TABLE_LOCATIONS, null, values);
-		} finally {
-			db.close();
-		}
+		SQLiteDatabase db = this.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(KEY_LATITUDE, location.getLatitude());
+		values.put(KEY_LONGITUDE, location.getLongitude());
+		values.put(KEY_CITY, location.getCity());
+		values.put(KEY_IMAGE, location.getImage());
 
+		// Inserting Row
+		db.insert(TABLE_LOCATIONS, null, values);
+		db.close();
 	}
 
 	/**

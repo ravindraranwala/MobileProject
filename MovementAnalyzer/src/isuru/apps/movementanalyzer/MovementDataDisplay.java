@@ -1,17 +1,24 @@
 package isuru.apps.movementanalyzer;
 
-import isuru.apps.movementanalyzer.R;
-
+import java.io.ByteArrayOutputStream;
+import java.util.List;
 import java.util.Locale;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.apps.movementanalyzer.dao.DatabaseHandler;
+import android.apps.movementanalyzer.model.GeographicLocation;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -20,6 +27,10 @@ import android.widget.TextView;
 
 public class MovementDataDisplay extends FragmentActivity implements
 		ActionBar.TabListener {
+
+	private static final String MASSACHUSETTS = "Massachusetts";
+
+	private static final String COLOMBO = "Colombo";
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -35,6 +46,8 @@ public class MovementDataDisplay extends FragmentActivity implements
 	 * The {@link ViewPager} that will host the section contents.
 	 */
 	ViewPager mViewPager;
+
+	DatabaseHandler db;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +88,15 @@ public class MovementDataDisplay extends FragmentActivity implements
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
 		}
+
+		// Initializing the DB if it is NOT already done.
+		db = new DatabaseHandler(this);
+		// Drop the existing table before re-creating.
+		db.dropTable();
+		// Then recreate the table.
+		db.createTable();
+		// Then load some sample location data into the table.
+		loadLocationData();
 
 		// Add action listners
 		// addBottonClickListners();
@@ -143,8 +165,7 @@ public class MovementDataDisplay extends FragmentActivity implements
 			}
 			if (position == 1) {
 				fragment = new ImageViewSectionFragment();
-			}
-			else {
+			} else {
 				fragment = new DummySectionFragment();
 			}
 			Bundle args = new Bundle();
@@ -212,12 +233,43 @@ public class MovementDataDisplay extends FragmentActivity implements
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 			super.onCreateView(inflater, container, savedInstanceState);
+
 			return inflater.inflate(R.layout.image_viewer_section, container,
 					false);
 		}
 
 	}
 
+	private void loadLocationData() {
+		Resources res = getResources();
+		Drawable drawable = res.getDrawable(R.drawable.test);
+		Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+		byte[] bitMapData = stream.toByteArray();
+
+		// CRUD operations. Inserting Locations.
+		Log.d("Insert: ", "Inserting ..");
+		db.addLocation(new GeographicLocation(6.92707860, 79.86124300, COLOMBO,
+				bitMapData));
+		db.addLocation(new GeographicLocation(42.40721070, -71.38243740,
+				MASSACHUSETTS, bitMapData));
+
+		Log.d("Reading: ", "Reading all locations in the city of Colombo");
+		// Then getting all the locations given a city.
+		List<GeographicLocation> locationByCity = db.getLocationByCity(COLOMBO);
+		String log;
+		for (GeographicLocation geographicLocation : locationByCity) {
+			log = "ID: " + geographicLocation.get_id() + " Latitude: "
+					+ geographicLocation.getLatitude() + " Lomgitude: "
+					+ geographicLocation.getLongitude() + " City: "
+					+ geographicLocation.getCity() + " Image: "
+					+ geographicLocation.getImage();
+
+			// Writing location to log.
+			Log.d("Location", log);
+		}
+	}
 	/*
 	 * public static class CoordinateManagerSectionFragment1 extends Fragment {
 	 * // /** // * The fragment argument representing the section number for
