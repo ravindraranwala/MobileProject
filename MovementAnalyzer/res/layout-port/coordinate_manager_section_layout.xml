@@ -1,0 +1,78 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinateManager"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MovementDataDisplay$CoordinateManagerSectionFragment" >
+
+    <GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:columnCount="10"
+        android:orientation="vertical"
+        android:rowCount="5" >
+
+        <RadioGroup
+            android:id="@+id/radioLocationSelectionMethod"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <RadioButton
+                android:id="@+id/radioButton1"
+                android:layout_columnSpan="2"
+                android:layout_gravity="left"
+                android:layout_row="1"
+                android:checked="true"
+                android:text="My location through GPS" />
+
+            <RadioButton
+                android:id="@+id/radioButton2"
+                android:layout_column="1"
+                android:layout_gravity="left"
+                android:layout_row="3"
+                android:text="Manually Enter" />
+        </RadioGroup>
+
+        <GridLayout
+            android:layout_width="158dp"
+            android:layout_height="72dp"
+            android:layout_column="0"
+            android:layout_gravity="left|top"
+            android:layout_row="4"
+            android:columnCount="1" >
+
+            <EditText
+                android:id="@+id/editText3"
+                android:layout_column="0"
+                android:layout_gravity="left|bottom"
+                android:layout_row="0"
+                android:ems="10"
+                android:enabled="false"
+                android:hint="Longitude" >
+
+                <requestFocus />
+            </EditText>
+
+            <EditText
+                android:id="@+id/editText1"
+                android:layout_column="0"
+                android:layout_gravity="left|top"
+                android:layout_row="0"
+                android:ems="10"
+                android:enabled="false"
+                android:hint="Latitude" />
+        </GridLayout>
+
+        <Button
+            android:id="@+id/coordinateSendButton"
+            android:layout_column="0"
+            android:layout_gravity="center"
+            android:layout_row="4"
+            android:text="GO" />
+    </GridLayout>
+
+</RelativeLayout>
