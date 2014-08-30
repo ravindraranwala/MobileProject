@@ -1,5 +1,7 @@
 package isuru.apps.movementanalyzer;
 
+import isuru.apps.movementanalyzer.R;
+
 import java.util.Locale;
 
 import android.app.ActionBar;
@@ -141,7 +143,8 @@ public class MovementDataDisplay extends FragmentActivity implements
 			}
 			if (position == 1) {
 				fragment = new ImageViewSectionFragment();
-			} else {
+			}
+			else {
 				fragment = new DummySectionFragment();
 			}
 			Bundle args = new Bundle();

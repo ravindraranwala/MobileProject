@@ -1,5 +1,6 @@
 package isuru.apps.movementanalyzer;
 
+import isuru.apps.movementanalyzer.R;
 import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
