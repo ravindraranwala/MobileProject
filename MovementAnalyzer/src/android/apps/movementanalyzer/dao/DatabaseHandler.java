@@ -10,6 +10,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+/**
+ * Data Access Facade which performs CRUD operations against SQLite DB.
+ * 
+ * @author Ravindra
+ * 
+ */
 public class DatabaseHandler extends SQLiteOpenHelper {
 	// All Static variables
 	// Database Version
@@ -62,6 +68,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATIONS);
 	}
 
+	/**
+	 * Creates a new location table in the DB.
+	 */
 	public void createTable() {
 		SQLiteDatabase db = this.getWritableDatabase();
 		String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_LOCATIONS + "("
@@ -72,7 +81,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * Adding new location
+	 * Adding a new location
 	 * 
 	 * @param location
 	 *            A new location to be added.
@@ -95,8 +104,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	 * Retrieves the locations associated with the given the city.
 	 * 
 	 * @param city
-	 *            the city
-	 * @return Location associated with the given city
+	 *            the current city
+	 * @return Locations associated with the given city
 	 */
 	public List<GeographicLocation> getLocationByCity(String city) {
 		List<GeographicLocation> locationsByCity = new ArrayList<GeographicLocation>();

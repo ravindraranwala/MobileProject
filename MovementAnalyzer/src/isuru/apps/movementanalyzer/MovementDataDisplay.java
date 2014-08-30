@@ -10,8 +10,10 @@ import android.apps.movementanalyzer.dao.DatabaseHandler;
 import android.apps.movementanalyzer.model.GeographicLocation;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -159,6 +161,7 @@ public class MovementDataDisplay extends FragmentActivity implements
 			// getItem is called to instantiate the fragment for the given page.
 			// Return a DummySectionFragment (defined as a static inner class
 			// below) with the page number as its lone argument.
+
 			Fragment fragment = null;
 			if (position == 0) {
 				fragment = new CoordinateManagerSectionFragment(mViewPager);
@@ -224,9 +227,7 @@ public class MovementDataDisplay extends FragmentActivity implements
 	}
 
 	public static class ImageViewSectionFragment extends Fragment {
-
 		public ImageViewSectionFragment() {
-			super();
 		}
 
 		@Override
@@ -236,13 +237,13 @@ public class MovementDataDisplay extends FragmentActivity implements
 
 			return inflater.inflate(R.layout.image_viewer_section, container,
 					false);
-		}
 
+		}
 	}
 
 	private void loadLocationData() {
 		Resources res = getResources();
-		Drawable drawable = res.getDrawable(R.drawable.test);
+		Drawable drawable = res.getDrawable(R.drawable.ic_launcher_web);
 		Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
@@ -255,13 +256,27 @@ public class MovementDataDisplay extends FragmentActivity implements
 		db.addLocation(new GeographicLocation(42.40721070, -71.38243740,
 				MASSACHUSETTS, bitMapData));
 
+		getLocationByCity(COLOMBO);
+	}
+
+	/**
+	 * Retrieves all the {@link Location} instances associated with the given
+	 * city.
+	 * 
+	 * @param city
+	 *            current city where the user resides.
+	 * @return A List of {@link Location} instances associated with the given
+	 *         city.
+	 */
+	private List<GeographicLocation> getLocationByCity(final String city) {
 		Log.d("Reading: ", "Reading all locations in the city of Colombo");
 		// Then getting all the locations given a city.
-		List<GeographicLocation> locationByCity = db.getLocationByCity(COLOMBO);
+		List<GeographicLocation> locationByCity = db.getLocationByCity(city);
+
 		String log;
 		for (GeographicLocation geographicLocation : locationByCity) {
 			log = "ID: " + geographicLocation.get_id() + " Latitude: "
-					+ geographicLocation.getLatitude() + " Lomgitude: "
+					+ geographicLocation.getLatitude() + " Longitude: "
 					+ geographicLocation.getLongitude() + " City: "
 					+ geographicLocation.getCity() + " Image: "
 					+ geographicLocation.getImage();
@@ -269,6 +284,15 @@ public class MovementDataDisplay extends FragmentActivity implements
 			// Writing location to log.
 			Log.d("Location", log);
 		}
+
+		return locationByCity;
+	}
+
+	private Bitmap getBitmapImage(final byte[] imageData) {
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		// Convert byte array to bitmap
+		return BitmapFactory.decodeByteArray(imageData, 0, imageData.length,
+				options);
 	}
 	/*
 	 * public static class CoordinateManagerSectionFragment1 extends Fragment {
