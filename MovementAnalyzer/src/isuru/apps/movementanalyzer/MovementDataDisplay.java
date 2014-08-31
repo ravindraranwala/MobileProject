@@ -1,26 +1,20 @@
 package isuru.apps.movementanalyzer;
 
-import java.io.ByteArrayOutputStream;
-import java.util.List;
 import java.util.Locale;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.apps.movementanalyzer.dao.DatabaseHandler;
+import android.apps.movementanalyzer.data.provider.MovementAnalyserDataProvider;
+import android.apps.movementanalyzer.img.util.ImageUtil;
 import android.apps.movementanalyzer.model.GeographicLocation;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -49,7 +43,7 @@ public class MovementDataDisplay extends FragmentActivity implements
 	 */
 	ViewPager mViewPager;
 
-	DatabaseHandler db;
+	private MovementAnalyserDataProvider dataProvider;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -91,12 +85,13 @@ public class MovementDataDisplay extends FragmentActivity implements
 					.setTabListener(this));
 		}
 
-		// Initializing the DB if it is NOT already done.
-		db = new DatabaseHandler(this);
+		// Instantiate the client data provider class here.
+		dataProvider = new MovementAnalyserDataProvider(new DatabaseHandler(
+				this));
 		// Drop the existing table before re-creating.
-		db.dropTable();
+		dataProvider.dropLocationTable();
 		// Then recreate the table.
-		db.createTable();
+		dataProvider.createLocationTable();
 		// Then load some sample location data into the table.
 		loadLocationData();
 
@@ -243,57 +238,21 @@ public class MovementDataDisplay extends FragmentActivity implements
 
 	private void loadLocationData() {
 		Resources res = getResources();
-		Drawable drawable = res.getDrawable(R.drawable.ic_launcher_web);
-		Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-		byte[] bitMapData = stream.toByteArray();
+		byte[] bitMapData = ImageUtil.getImageByteData(res
+				.getDrawable(R.drawable.test));
 
-		// CRUD operations. Inserting Locations.
-		Log.d("Insert: ", "Inserting ..");
-		db.addLocation(new GeographicLocation(6.92707860, 79.86124300, COLOMBO,
-				bitMapData));
-		db.addLocation(new GeographicLocation(42.40721070, -71.38243740,
-				MASSACHUSETTS, bitMapData));
+		// Constructing the necessary sample data to persist in the DB.
+		dataProvider.AddLocation(new GeographicLocation(6.92707860,
+				79.86124300, COLOMBO, bitMapData));
+		dataProvider.AddLocation(new GeographicLocation(42.40721070,
+				-71.38243740, MASSACHUSETTS, bitMapData));
 
-		getLocationByCity(COLOMBO);
+		// TODO: This is just used to verify that the functionality is working
+		// properly. Later on you may remove that when the system is put in the
+		// production.
+		dataProvider.getLocationByCity(COLOMBO);
 	}
 
-	/**
-	 * Retrieves all the {@link Location} instances associated with the given
-	 * city.
-	 * 
-	 * @param city
-	 *            current city where the user resides.
-	 * @return A List of {@link Location} instances associated with the given
-	 *         city.
-	 */
-	private List<GeographicLocation> getLocationByCity(final String city) {
-		Log.d("Reading: ", "Reading all locations in the city of Colombo");
-		// Then getting all the locations given a city.
-		List<GeographicLocation> locationByCity = db.getLocationByCity(city);
-
-		String log;
-		for (GeographicLocation geographicLocation : locationByCity) {
-			log = "ID: " + geographicLocation.get_id() + " Latitude: "
-					+ geographicLocation.getLatitude() + " Longitude: "
-					+ geographicLocation.getLongitude() + " City: "
-					+ geographicLocation.getCity() + " Image: "
-					+ geographicLocation.getImage();
-
-			// Writing location to log.
-			Log.d("Location", log);
-		}
-
-		return locationByCity;
-	}
-
-	private Bitmap getBitmapImage(final byte[] imageData) {
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		// Convert byte array to bitmap
-		return BitmapFactory.decodeByteArray(imageData, 0, imageData.length,
-				options);
-	}
 	/*
 	 * public static class CoordinateManagerSectionFragment1 extends Fragment {
 	 * // /** // * The fragment argument representing the section number for
