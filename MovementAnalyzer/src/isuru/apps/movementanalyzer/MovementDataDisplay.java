@@ -15,10 +15,15 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class MovementDataDisplay extends FragmentActivity implements
@@ -221,7 +226,7 @@ public class MovementDataDisplay extends FragmentActivity implements
 	}
 
 	@SuppressLint("ValidFragment")
-	public class ImageViewSectionFragment extends Fragment {
+	public static class ImageViewSectionFragment extends Fragment {
 		public ImageViewSectionFragment() {
 		}
 
@@ -229,10 +234,28 @@ public class MovementDataDisplay extends FragmentActivity implements
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 			super.onCreateView(inflater, container, savedInstanceState);
+			Log.i("aaa","Called");
+			
+			//// Temp code section
+			View rootView = inflater.inflate(R.layout.image_viewer_section, container, false);
+			RelativeLayout imageViewerSectionLayout = (RelativeLayout)rootView;
+	        
+			final ImageView imageView = (ImageView) imageViewerSectionLayout.findViewById(R.id.test_image);
+		    Button buttonTestImage = (Button) imageViewerSectionLayout.findViewById(R.id.button1);
+		    buttonTestImage.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					
+					Log.i("aaa","Clicked: ");
+					int id = R.drawable.ic_launcher;
+					imageView.setImageResource(R.drawable.ic_launcher);
+					imageView.buildLayer();
+				}
+			});
+			////
 
-			return inflater.inflate(R.layout.image_viewer_section, container,
-					false);
-
+			return imageViewerSectionLayout;
 		}
 	}
 
