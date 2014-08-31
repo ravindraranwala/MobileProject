@@ -166,7 +166,7 @@ public class MovementDataDisplay extends FragmentActivity implements
 			if (position == 0) {
 				fragment = new CoordinateManagerSectionFragment(mViewPager);
 			}
-			if (position == 1) {
+			else if (position == 1) {
 				fragment = new ImageViewSectionFragment();
 			} else {
 				fragment = new DummySectionFragment();
