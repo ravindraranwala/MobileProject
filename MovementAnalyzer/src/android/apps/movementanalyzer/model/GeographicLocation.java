@@ -20,6 +20,7 @@ public class GeographicLocation {
 	private String city;
 	private byte[] image;
 	private String locationType;
+	private String description;
 
 	/**
 	 * Constructs a Location instance with the given arguments in it.
@@ -37,12 +38,13 @@ public class GeographicLocation {
 	 *            supermarket etc.
 	 */
 	public GeographicLocation(double latitude, double longitude, String city,
-			byte[] image, String locationType) {
+			byte[] image, String locationType, String description) {
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.city = city;
 		this.image = image;
 		this.locationType = locationType;
+		this.description = description;
 	}
 
 	/**
@@ -102,6 +104,14 @@ public class GeographicLocation {
 	 */
 	public Bitmap getBitmapImage() {
 		return ImageUtil.getBitmapImage(image);
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }

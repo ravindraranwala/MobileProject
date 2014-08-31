@@ -35,6 +35,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	// This type can be a railway station, bus stand, supermarket, hospital etc.
 	private static final String KEY_LOCATION_TYPE = "type";
 
+	private static final String KEY_LOCATION_DESCRIPTION = "description";
+
 	private static final String KEY_IMAGE = "image";
 	private static final String AND = " AND ";
 
@@ -53,7 +55,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_LOCATIONS + "("
 				+ KEY_ID + " INTEGER PRIMARY KEY," + KEY_LATITUDE + " REAL,"
 				+ KEY_LONGITUDE + " REAL," + KEY_CITY + " TEXT,"
-				+ KEY_LOCATION_TYPE + " TEXT," + KEY_IMAGE + " BLOB" + ")";
+				+ KEY_LOCATION_TYPE + " TEXT," + KEY_LOCATION_DESCRIPTION
+				+ " TEXT," + KEY_IMAGE + " BLOB" + ")";
 		db.execSQL(CREATE_CONTACTS_TABLE);
 	}
 
@@ -101,6 +104,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		values.put(KEY_LONGITUDE, location.getLongitude());
 		values.put(KEY_CITY, location.getCity());
 		values.put(KEY_LOCATION_TYPE, location.getLocationType());
+		values.put(KEY_LOCATION_DESCRIPTION, location.getDescription());
 		values.put(KEY_IMAGE, location.getImage());
 
 		// Inserting Row
@@ -121,8 +125,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.query(TABLE_LOCATIONS, new String[] { KEY_ID,
 				KEY_LATITUDE, KEY_LONGITUDE, KEY_CITY, KEY_LOCATION_TYPE,
-				KEY_IMAGE }, KEY_CITY + " =?", new String[] { city }, null,
-				null, null);
+				KEY_LOCATION_DESCRIPTION, KEY_IMAGE }, KEY_CITY + " =?",
+				new String[] { city }, null, null, null);
 
 		// looping through all rows and adding to list
 		if (cursor.moveToFirst()) {
@@ -136,6 +140,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 						.getColumnIndex(KEY_CITY)));
 				location.setLocationType(cursor.getString(cursor
 						.getColumnIndex(KEY_LOCATION_TYPE)));
+				location.setDescription(cursor.getString(cursor
+						.getColumnIndex(KEY_LOCATION_DESCRIPTION)));
 				location.setImage(cursor.getBlob(cursor
 						.getColumnIndex(KEY_IMAGE)));
 
@@ -162,13 +168,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		List<GeographicLocation> locationByCoordinate = new ArrayList<GeographicLocation>();
 		SQLiteDatabase db = this.getReadableDatabase();
 
-		Cursor cursor = db.query(
-				TABLE_LOCATIONS,
-				new String[] { KEY_ID, KEY_LATITUDE, KEY_LONGITUDE, KEY_CITY,
-						KEY_LOCATION_TYPE, KEY_IMAGE },
-				KEY_LATITUDE + " =?" + AND + KEY_LONGITUDE + " =?",
-				new String[] { String.valueOf(latitude),
-						String.valueOf(longitude) }, null, null, null);
+		Cursor cursor = db
+				.query(TABLE_LOCATIONS, new String[] { KEY_ID, KEY_LATITUDE,
+						KEY_LONGITUDE, KEY_CITY, KEY_LOCATION_TYPE,
+						KEY_LOCATION_DESCRIPTION, KEY_IMAGE }, KEY_LATITUDE
+						+ " =?" + AND + KEY_LONGITUDE + " =?", new String[] {
+						String.valueOf(latitude), String.valueOf(longitude) },
+						null, null, null);
 
 		// looping through all rows and adding to list
 		if (cursor.moveToFirst()) {
@@ -182,6 +188,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 						.getColumnIndex(KEY_CITY)));
 				location.setLocationType(cursor.getString(cursor
 						.getColumnIndex(KEY_LOCATION_TYPE)));
+				location.setDescription(cursor.getString(cursor
+						.getColumnIndex(KEY_LOCATION_DESCRIPTION)));
 				location.setImage(cursor.getBlob(cursor
 						.getColumnIndex(KEY_IMAGE)));
 
@@ -208,9 +216,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.query(TABLE_LOCATIONS, new String[] { KEY_ID,
 				KEY_LATITUDE, KEY_LONGITUDE, KEY_CITY, KEY_LOCATION_TYPE,
-				KEY_IMAGE },
-				KEY_CITY + " =?" + AND + KEY_LOCATION_TYPE + " =?",
-				new String[] { city, category }, null, null, null);
+				KEY_LOCATION_DESCRIPTION, KEY_IMAGE }, KEY_CITY + " =?" + AND
+				+ KEY_LOCATION_TYPE + " =?", new String[] { city, category },
+				null, null, null);
 
 		if (cursor.moveToFirst()) {
 			do {
@@ -223,6 +231,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 						.getColumnIndex(KEY_CITY)));
 				location.setLocationType(cursor.getString(cursor
 						.getColumnIndex(KEY_LOCATION_TYPE)));
+				location.setDescription(cursor.getString(cursor
+						.getColumnIndex(KEY_LOCATION_DESCRIPTION)));
 				location.setImage(cursor.getBlob(cursor
 						.getColumnIndex(KEY_IMAGE)));
 

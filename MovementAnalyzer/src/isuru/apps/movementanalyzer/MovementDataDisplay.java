@@ -165,8 +165,7 @@ public class MovementDataDisplay extends FragmentActivity implements
 			Fragment fragment = null;
 			if (position == 0) {
 				fragment = new CoordinateManagerSectionFragment(mViewPager);
-			}
-			else if (position == 1) {
+			} else if (position == 1) {
 				fragment = new ImageViewSectionFragment();
 			} else {
 				fragment = new DummySectionFragment();
@@ -274,10 +273,11 @@ public class MovementDataDisplay extends FragmentActivity implements
 		// Constructing the necessary sample data to persist in the DB.
 		dataProvider.addLocation(new GeographicLocation(6.92707860,
 				79.86124300, COLOMBO, bitMapData, LocationType.RAILWAY_STATION
-						.getLocationCategory()));
+						.getLocationCategory(), "Fort Railway Station."));
 		dataProvider.addLocation(new GeographicLocation(42.40721070,
 				-71.38243740, MASSACHUSETTS, bitMapData,
-				LocationType.RAILWAY_STATION.getLocationCategory()));
+				LocationType.RAILWAY_STATION.getLocationCategory(),
+				"Massachusetts Railway Station."));
 
 		// TODO: This is just used to verify that the functionality is working
 		// properly. Later on you may remove that when the system is put in the
