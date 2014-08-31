@@ -22,9 +22,12 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 public class MovementDataDisplay extends FragmentActivity implements
@@ -260,7 +263,29 @@ public class MovementDataDisplay extends FragmentActivity implements
 					imageView.buildLayer();
 				}
 			});
+			
+			// Spinners
+			// Location Spinner
+			Spinner spinnerLocation = (Spinner) imageViewerSectionLayout
+					.findViewById(R.id.spinner1);
+			Spinner spinnerCatagory = (Spinner) imageViewerSectionLayout
+					.findViewById(R.id.spinner2);
+			
+			String[] locationList = {"Colombo", "MIT"};
+			ArrayAdapter<String> sp1Adaptor = new ArrayAdapter<String>(inflater.getContext(), android.R.layout.simple_spinner_dropdown_item, locationList);
+			spinnerLocation.setAdapter(sp1Adaptor);
 
+			// Catogory Spinner
+			String[] catogoryList = {"Stations", "Hospitals"};
+			ArrayAdapter<String> sp2Adaptor = new ArrayAdapter<String>(inflater.getContext(), android.R.layout.simple_spinner_dropdown_item, catogoryList);
+			spinnerCatagory.setAdapter(sp2Adaptor);
+
+			// ListView1
+			ListView listView = (ListView) imageViewerSectionLayout
+					.findViewById(R.id.listView1);
+			String[] infoList = {"Description 1", "Second description"};
+			ArrayAdapter<String> listViewDataAdaptor = new ArrayAdapter<String>(inflater.getContext(), android.R.layout.simple_dropdown_item_1line, infoList);
+			listView.setAdapter(listViewDataAdaptor);
 			return imageViewerSectionLayout;
 		}
 	}
