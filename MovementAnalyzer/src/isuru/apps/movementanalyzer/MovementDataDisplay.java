@@ -1,5 +1,8 @@
 package isuru.apps.movementanalyzer;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import android.annotation.SuppressLint;
@@ -9,6 +12,7 @@ import android.apps.movementanalyzer.data.provider.LocationDataProvider;
 import android.apps.movementanalyzer.img.util.ImageUtil;
 import android.apps.movementanalyzer.location.type.LocationType;
 import android.apps.movementanalyzer.model.GeographicLocation;
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,6 +26,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -29,6 +34,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.AdapterView;
+import android.widget.Toast;
 
 public class MovementDataDisplay extends FragmentActivity implements
 		ActionBar.TabListener {
@@ -247,6 +254,9 @@ public class MovementDataDisplay extends FragmentActivity implements
 					.findViewById(R.id.test_image);
 			Button buttonTestImage = (Button) imageViewerSectionLayout
 					.findViewById(R.id.button1);
+
+			final List<GeographicLocation> locationByCity = MovementDataDisplay.this.dataProvider
+					.getLocationByCity(COLOMBO);
 			buttonTestImage.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -254,40 +264,85 @@ public class MovementDataDisplay extends FragmentActivity implements
 
 					Log.i("aaa", "Clicked: ");
 					// imageView.setImageResource(R.drawable.ic_launcher);
-					GeographicLocation location = MovementDataDisplay.this.dataProvider
-							.getLocationByCityAndCategory(
-									COLOMBO,
-									LocationType.RAILWAY_STATION
-											.getLocationCategory()).get(0);
+
+					GeographicLocation location = locationByCity.get(0);
 					imageView.setImageBitmap(location.getBitmapImage());
 					imageView.buildLayer();
 				}
 			});
-			
+
 			// Spinners
 			// Location Spinner
 			Spinner spinnerLocation = (Spinner) imageViewerSectionLayout
 					.findViewById(R.id.spinner1);
 			Spinner spinnerCatagory = (Spinner) imageViewerSectionLayout
 					.findViewById(R.id.spinner2);
-			
-			String[] locationList = {"Colombo", "MIT"};
-			ArrayAdapter<String> sp1Adaptor = new ArrayAdapter<String>(inflater.getContext(), android.R.layout.simple_spinner_dropdown_item, locationList);
+
+			String[] locationList = { COLOMBO, MASSACHUSETTS };
+			ArrayAdapter<String> sp1Adaptor = new ArrayAdapter<String>(
+					inflater.getContext(),
+					android.R.layout.simple_spinner_dropdown_item, locationList);
 			spinnerLocation.setAdapter(sp1Adaptor);
 
 			// Catogory Spinner
-			String[] catogoryList = {"Stations", "Hospitals"};
-			ArrayAdapter<String> sp2Adaptor = new ArrayAdapter<String>(inflater.getContext(), android.R.layout.simple_spinner_dropdown_item, catogoryList);
+			String[] catogoryList = {
+					LocationType.RAILWAY_STATION.getLocationCategory(),
+					LocationType.HOSPITAL.getLocationCategory() };
+			ArrayAdapter<String> sp2Adaptor = new ArrayAdapter<String>(
+					inflater.getContext(),
+					android.R.layout.simple_spinner_dropdown_item, catogoryList);
 			spinnerCatagory.setAdapter(sp2Adaptor);
 
 			// ListView1
 			ListView listView = (ListView) imageViewerSectionLayout
 					.findViewById(R.id.listView1);
-			String[] infoList = {"Description 1", "Second description"};
-			ArrayAdapter<String> listViewDataAdaptor = new ArrayAdapter<String>(inflater.getContext(), android.R.layout.simple_dropdown_item_1line, infoList);
-			listView.setAdapter(listViewDataAdaptor);
+			List<String> locations = new ArrayList<String>();
+			for (GeographicLocation geographicLocation : locationByCity) {
+				locations.add(geographicLocation.toString());
+			}
+			LocationArrayAdapter locationAdapter = new LocationArrayAdapter(
+					inflater.getContext(),
+					android.R.layout.simple_dropdown_item_1line, locations);
+
+			listView.setAdapter(locationAdapter);
+
+			listView.setOnItemClickListener(new OnItemClickListener() {
+
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					Toast.makeText(getApplicationContext(),
+							"Click ListItem Number " + position,
+							Toast.LENGTH_LONG).show();
+
+				}
+			});
 			return imageViewerSectionLayout;
 		}
+	}
+
+	public class LocationArrayAdapter extends ArrayAdapter<String> {
+		HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
+
+		public LocationArrayAdapter(Context context, int resource,
+				List<String> objects) {
+			super(context, resource, objects);
+			for (int i = 0; i < objects.size(); ++i) {
+				mIdMap.put(objects.get(i), i);
+			}
+		}
+
+		@Override
+		public long getItemId(int position) {
+			String location = getItem(position);
+			return mIdMap.get(location);
+		}
+
+		@Override
+		public boolean hasStableIds() {
+			return true;
+		}
+
 	}
 
 	private void loadLocationData() {
@@ -299,6 +354,9 @@ public class MovementDataDisplay extends FragmentActivity implements
 		dataProvider.addLocation(new GeographicLocation(6.92707860,
 				79.86124300, COLOMBO, bitMapData, LocationType.RAILWAY_STATION
 						.getLocationCategory(), "Fort Railway Station."));
+		dataProvider.addLocation(new GeographicLocation(6.92707860,
+				79.86124300, COLOMBO, bitMapData, LocationType.HOSPITAL
+						.getLocationCategory(), "National Hospital."));
 		dataProvider.addLocation(new GeographicLocation(42.40721070,
 				-71.38243740, MASSACHUSETTS, bitMapData,
 				LocationType.RAILWAY_STATION.getLocationCategory(),

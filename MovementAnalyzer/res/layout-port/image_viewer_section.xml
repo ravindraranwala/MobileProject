@@ -3,14 +3,14 @@
     android:id="@+id/image_viewer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-	tools:context=".MovementDataDisplay$ImageViewSectionFragment" >
+    tools:context=".MovementDataDisplay$ImageViewSectionFragment" >
 
     <GridLayout
+        android:id="@+id/gridLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/test_image"
         android:layout_alignParentRight="true" >
-
     </GridLayout>
 
     <ImageView
@@ -26,16 +26,39 @@
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/gridLayout1"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
         android:text="Button" />
 
     <Button
         android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/gridLayout1"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
         android:text="Button" />
+
+    <Spinner
+        android:id="@+id/spinner2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/spinner1" />
+
+    <Spinner
+        android:id="@+id/spinner1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" />
+
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/spinner2" >
+
+    </ListView>
 
 </RelativeLayout>

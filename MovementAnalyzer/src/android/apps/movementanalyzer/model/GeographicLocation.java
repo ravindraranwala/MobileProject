@@ -114,4 +114,10 @@ public class GeographicLocation {
 		this.description = description;
 	}
 
+	@Override
+	public String toString() {
+		return "latitude=" + latitude + ", longitude=" + longitude + ", city="
+				+ city + ", locationType=" + locationType + ", description="
+				+ description;
+	}
 }
