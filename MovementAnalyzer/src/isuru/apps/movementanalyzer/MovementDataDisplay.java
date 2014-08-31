@@ -2,6 +2,7 @@ package isuru.apps.movementanalyzer;
 
 import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.apps.movementanalyzer.data.provider.MovementAnalyserDataProvider;
@@ -219,7 +220,8 @@ public class MovementDataDisplay extends FragmentActivity implements
 		}
 	}
 
-	public static class ImageViewSectionFragment extends Fragment {
+	@SuppressLint("ValidFragment")
+	public class ImageViewSectionFragment extends Fragment {
 		public ImageViewSectionFragment() {
 		}
 
@@ -237,7 +239,7 @@ public class MovementDataDisplay extends FragmentActivity implements
 	private void loadLocationData() {
 		Resources res = getResources();
 		byte[] bitMapData = ImageUtil.getImageByteData(res
-				.getDrawable(R.drawable.test));
+				.getDrawable(R.drawable.ic_launcher_web));
 
 		// Constructing the necessary sample data to persist in the DB.
 		dataProvider.AddLocation(new GeographicLocation(6.92707860,

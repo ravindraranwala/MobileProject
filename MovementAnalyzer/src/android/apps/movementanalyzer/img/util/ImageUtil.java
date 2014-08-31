@@ -35,7 +35,7 @@ public class ImageUtil {
 	 *            byte array which backs the image.
 	 * @return {@link Bitmap} data constructed using the given byte data.
 	 */
-	private static Bitmap getBitmapImage(final byte[] imageData) {
+	public static Bitmap getBitmapImage(final byte[] imageData) {
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		// Convert byte array to bitmap
 		return BitmapFactory.decodeByteArray(imageData, 0, imageData.length,

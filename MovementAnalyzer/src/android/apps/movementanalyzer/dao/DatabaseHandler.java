@@ -41,19 +41,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	// Creating Tables
 	@Override
 	public void onCreate(SQLiteDatabase db) {
+		createLocationTable(db);
+
+	}
+
+	private void createLocationTable(SQLiteDatabase db) {
 		String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_LOCATIONS + "("
 				+ KEY_ID + " INTEGER PRIMARY KEY," + KEY_LATITUDE + " REAL,"
 				+ KEY_LONGITUDE + " REAL," + KEY_CITY + " TEXT," + KEY_IMAGE
 				+ " BLOB" + ")";
 		db.execSQL(CREATE_CONTACTS_TABLE);
-
 	}
 
 	// Upgrading database
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// Drop older table if existed
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATIONS);
+		dropLocationTable(db);
 
 		// Create tables again
 		onCreate(db);
@@ -65,6 +68,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	public void dropTable() {
 		// Drop older table if existed
 		SQLiteDatabase db = this.getWritableDatabase();
+		dropLocationTable(db);
+	}
+
+	private void dropLocationTable(SQLiteDatabase db) {
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATIONS);
 	}
 
@@ -73,11 +80,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	 */
 	public void createTable() {
 		SQLiteDatabase db = this.getWritableDatabase();
-		String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_LOCATIONS + "("
-				+ KEY_ID + " INTEGER PRIMARY KEY," + KEY_LATITUDE + " REAL,"
-				+ KEY_LONGITUDE + " REAL," + KEY_CITY + " TEXT," + KEY_IMAGE
-				+ " BLOB" + ")";
-		db.execSQL(CREATE_CONTACTS_TABLE);
+		createLocationTable(db);
 	}
 
 	/**
