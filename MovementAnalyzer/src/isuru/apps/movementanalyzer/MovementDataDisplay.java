@@ -5,8 +5,9 @@ import java.util.Locale;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
-import android.apps.movementanalyzer.data.provider.MovementAnalyserDataProvider;
+import android.apps.movementanalyzer.data.provider.LocationDataProvider;
 import android.apps.movementanalyzer.img.util.ImageUtil;
+import android.apps.movementanalyzer.location.type.LocationType;
 import android.apps.movementanalyzer.model.GeographicLocation;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -48,7 +49,7 @@ public class MovementDataDisplay extends FragmentActivity implements
 	 */
 	ViewPager mViewPager;
 
-	private MovementAnalyserDataProvider dataProvider;
+	private LocationDataProvider dataProvider;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +92,7 @@ public class MovementDataDisplay extends FragmentActivity implements
 		}
 
 		// Instantiate the client data provider class here.
-		dataProvider = new MovementAnalyserDataProvider(this);
+		dataProvider = new LocationDataProvider(this);
 		// Drop the existing table before re-creating.
 		dataProvider.dropLocationTable();
 		// Then recreate the table.
@@ -226,7 +227,7 @@ public class MovementDataDisplay extends FragmentActivity implements
 	}
 
 	@SuppressLint("ValidFragment")
-	public static class ImageViewSectionFragment extends Fragment {
+	public class ImageViewSectionFragment extends Fragment {
 		public ImageViewSectionFragment() {
 		}
 
@@ -234,26 +235,32 @@ public class MovementDataDisplay extends FragmentActivity implements
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 			super.onCreateView(inflater, container, savedInstanceState);
-			Log.i("aaa","Called");
-			
-			//// Temp code section
-			View rootView = inflater.inflate(R.layout.image_viewer_section, container, false);
-			RelativeLayout imageViewerSectionLayout = (RelativeLayout)rootView;
-	        
-			final ImageView imageView = (ImageView) imageViewerSectionLayout.findViewById(R.id.test_image);
-		    Button buttonTestImage = (Button) imageViewerSectionLayout.findViewById(R.id.button1);
-		    buttonTestImage.setOnClickListener(new OnClickListener() {
-				
+			Log.i("aaa", "Called");
+
+			View rootView = inflater.inflate(R.layout.image_viewer_section,
+					container, false);
+			RelativeLayout imageViewerSectionLayout = (RelativeLayout) rootView;
+
+			final ImageView imageView = (ImageView) imageViewerSectionLayout
+					.findViewById(R.id.test_image);
+			Button buttonTestImage = (Button) imageViewerSectionLayout
+					.findViewById(R.id.button1);
+			buttonTestImage.setOnClickListener(new OnClickListener() {
+
 				@Override
 				public void onClick(View v) {
-					
-					Log.i("aaa","Clicked: ");
-					int id = R.drawable.ic_launcher;
-					imageView.setImageResource(R.drawable.ic_launcher);
+
+					Log.i("aaa", "Clicked: ");
+					// imageView.setImageResource(R.drawable.ic_launcher);
+					GeographicLocation location = MovementDataDisplay.this.dataProvider
+							.getLocationByCityAndCategory(
+									COLOMBO,
+									LocationType.RAILWAY_STATION
+											.getLocationCategory()).get(0);
+					imageView.setImageBitmap(location.getBitmapImage());
 					imageView.buildLayer();
 				}
 			});
-			////
 
 			return imageViewerSectionLayout;
 		}
@@ -265,10 +272,12 @@ public class MovementDataDisplay extends FragmentActivity implements
 				.getDrawable(R.drawable.ic_launcher_web));
 
 		// Constructing the necessary sample data to persist in the DB.
-		dataProvider.AddLocation(new GeographicLocation(6.92707860,
-				79.86124300, COLOMBO, bitMapData));
-		dataProvider.AddLocation(new GeographicLocation(42.40721070,
-				-71.38243740, MASSACHUSETTS, bitMapData));
+		dataProvider.addLocation(new GeographicLocation(6.92707860,
+				79.86124300, COLOMBO, bitMapData, LocationType.RAILWAY_STATION
+						.getLocationCategory()));
+		dataProvider.addLocation(new GeographicLocation(42.40721070,
+				-71.38243740, MASSACHUSETTS, bitMapData,
+				LocationType.RAILWAY_STATION.getLocationCategory()));
 
 		// TODO: This is just used to verify that the functionality is working
 		// properly. Later on you may remove that when the system is put in the
