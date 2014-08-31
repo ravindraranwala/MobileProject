@@ -4,7 +4,6 @@ import java.util.Locale;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
-import android.apps.movementanalyzer.dao.DatabaseHandler;
 import android.apps.movementanalyzer.data.provider.MovementAnalyserDataProvider;
 import android.apps.movementanalyzer.img.util.ImageUtil;
 import android.apps.movementanalyzer.model.GeographicLocation;
@@ -86,8 +85,7 @@ public class MovementDataDisplay extends FragmentActivity implements
 		}
 
 		// Instantiate the client data provider class here.
-		dataProvider = new MovementAnalyserDataProvider(new DatabaseHandler(
-				this));
+		dataProvider = new MovementAnalyserDataProvider(this);
 		// Drop the existing table before re-creating.
 		dataProvider.dropLocationTable();
 		// Then recreate the table.

@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.apps.movementanalyzer.dao.DatabaseHandler;
 import android.apps.movementanalyzer.model.GeographicLocation;
+import android.content.Context;
 import android.location.Location;
 import android.util.Log;
 
@@ -18,8 +19,8 @@ import android.util.Log;
 public class MovementAnalyserDataProvider {
 	private final DatabaseHandler db;
 
-	public MovementAnalyserDataProvider(DatabaseHandler db) {
-		this.db = db;
+	public MovementAnalyserDataProvider(final Context context) {
+		this.db = new DatabaseHandler(context);
 	}
 
 	/**
