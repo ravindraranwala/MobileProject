@@ -1,6 +1,5 @@
 package isuru.apps.movementanalyzer;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -8,6 +7,7 @@ import java.util.Locale;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.apps.movementanalyzer.city.City;
 import android.apps.movementanalyzer.data.provider.LocationDataProvider;
 import android.apps.movementanalyzer.img.util.ImageUtil;
 import android.apps.movementanalyzer.location.type.LocationType;
@@ -26,6 +26,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -34,16 +35,10 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.AdapterView;
 import android.widget.Toast;
 
 public class MovementDataDisplay extends FragmentActivity implements
 		ActionBar.TabListener {
-
-	private static final String MASSACHUSETTS = "Massachusetts";
-
-	private static final String COLOMBO = "Colombo";
-
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a
@@ -256,7 +251,7 @@ public class MovementDataDisplay extends FragmentActivity implements
 					.findViewById(R.id.button1);
 
 			final List<GeographicLocation> locationByCity = MovementDataDisplay.this.dataProvider
-					.getLocationByCity(COLOMBO);
+					.getLocationByCity(City.COLOMBO.getCity());
 			buttonTestImage.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -278,7 +273,8 @@ public class MovementDataDisplay extends FragmentActivity implements
 			Spinner spinnerCatagory = (Spinner) imageViewerSectionLayout
 					.findViewById(R.id.spinner2);
 
-			String[] locationList = { COLOMBO, MASSACHUSETTS };
+			String[] locationList = { City.COLOMBO.getCity(),
+					City.MASSACHUSETTS.getCity() };
 			ArrayAdapter<String> sp1Adaptor = new ArrayAdapter<String>(
 					inflater.getContext(),
 					android.R.layout.simple_spinner_dropdown_item, locationList);
@@ -296,13 +292,9 @@ public class MovementDataDisplay extends FragmentActivity implements
 			// ListView1
 			ListView listView = (ListView) imageViewerSectionLayout
 					.findViewById(R.id.listView1);
-			List<String> locations = new ArrayList<String>();
-			for (GeographicLocation geographicLocation : locationByCity) {
-				locations.add(geographicLocation.toString());
-			}
 			LocationArrayAdapter locationAdapter = new LocationArrayAdapter(
 					inflater.getContext(),
-					android.R.layout.simple_dropdown_item_1line, locations);
+					android.R.layout.simple_dropdown_item_1line, locationByCity);
 
 			listView.setAdapter(locationAdapter);
 
@@ -321,11 +313,11 @@ public class MovementDataDisplay extends FragmentActivity implements
 		}
 	}
 
-	public class LocationArrayAdapter extends ArrayAdapter<String> {
-		HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
+	public class LocationArrayAdapter extends ArrayAdapter<GeographicLocation> {
+		HashMap<GeographicLocation, Integer> mIdMap = new HashMap<GeographicLocation, Integer>();
 
 		public LocationArrayAdapter(Context context, int resource,
-				List<String> objects) {
+				List<GeographicLocation> objects) {
 			super(context, resource, objects);
 			for (int i = 0; i < objects.size(); ++i) {
 				mIdMap.put(objects.get(i), i);
@@ -334,7 +326,7 @@ public class MovementDataDisplay extends FragmentActivity implements
 
 		@Override
 		public long getItemId(int position) {
-			String location = getItem(position);
+			GeographicLocation location = getItem(position);
 			return mIdMap.get(location);
 		}
 
@@ -352,20 +344,22 @@ public class MovementDataDisplay extends FragmentActivity implements
 
 		// Constructing the necessary sample data to persist in the DB.
 		dataProvider.addLocation(new GeographicLocation(6.92707860,
-				79.86124300, COLOMBO, bitMapData, LocationType.RAILWAY_STATION
-						.getLocationCategory(), "Fort Railway Station."));
+				79.86124300, City.COLOMBO.getCity(), bitMapData,
+				LocationType.RAILWAY_STATION.getLocationCategory(),
+				"Fort Railway Station."));
 		dataProvider.addLocation(new GeographicLocation(6.92707860,
-				79.86124300, COLOMBO, bitMapData, LocationType.HOSPITAL
-						.getLocationCategory(), "National Hospital."));
+				79.86124300, City.COLOMBO.getCity(), bitMapData,
+				LocationType.HOSPITAL.getLocationCategory(),
+				"National Hospital."));
 		dataProvider.addLocation(new GeographicLocation(42.40721070,
-				-71.38243740, MASSACHUSETTS, bitMapData,
+				-71.38243740, City.MASSACHUSETTS.getCity(), bitMapData,
 				LocationType.RAILWAY_STATION.getLocationCategory(),
 				"Massachusetts Railway Station."));
 
 		// TODO: This is just used to verify that the functionality is working
 		// properly. Later on you may remove that when the system is put in the
 		// production.
-		dataProvider.getLocationByCity(COLOMBO);
+		dataProvider.getLocationByCity(City.COLOMBO.getCity());
 	}
 
 	/*
