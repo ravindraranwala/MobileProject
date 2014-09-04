@@ -307,6 +307,13 @@ public class MovementDataDisplay extends FragmentActivity implements
 							"Click ListItem Number " + position,
 							Toast.LENGTH_LONG).show();
 
+					/*
+					 * Render the image associated with the selected location
+					 * here.
+					 */
+					imageView.setImageBitmap(locationByCity.get(position)
+							.getBitmapImage());
+
 				}
 			});
 			return imageViewerSectionLayout;
@@ -342,13 +349,16 @@ public class MovementDataDisplay extends FragmentActivity implements
 		byte[] bitMapData = ImageUtil.getImageByteData(res
 				.getDrawable(R.drawable.ic_launcher_web));
 
+		byte[] hospital = ImageUtil.getImageByteData(res
+				.getDrawable(R.drawable.test));
+
 		// Constructing the necessary sample data to persist in the DB.
 		dataProvider.addLocation(new GeographicLocation(6.92707860,
 				79.86124300, City.COLOMBO.getCity(), bitMapData,
 				LocationType.RAILWAY_STATION.getLocationCategory(),
 				"Fort Railway Station."));
 		dataProvider.addLocation(new GeographicLocation(6.92707860,
-				79.86124300, City.COLOMBO.getCity(), bitMapData,
+				79.86124300, City.COLOMBO.getCity(), hospital,
 				LocationType.HOSPITAL.getLocationCategory(),
 				"National Hospital."));
 		dataProvider.addLocation(new GeographicLocation(42.40721070,
