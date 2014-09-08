@@ -171,6 +171,8 @@ public class MovementDataDisplay extends FragmentActivity implements
 			if (position == 0) {
 				fragment = new CoordinateManagerSectionFragment(mViewPager);
 			} else if (position == 1) {
+				fragment = new InformationSelectionFragment();
+			} else if (position == 2) {
 				fragment = new ImageViewSectionFragment();
 			} else {
 				fragment = new DummySectionFragment();
@@ -231,8 +233,8 @@ public class MovementDataDisplay extends FragmentActivity implements
 	}
 
 	@SuppressLint("ValidFragment")
-	public class ImageViewSectionFragment extends Fragment {
-		public ImageViewSectionFragment() {
+	public class InformationSelectionFragment extends Fragment {
+		public InformationSelectionFragment() {
 		}
 
 		@Override
@@ -241,7 +243,7 @@ public class MovementDataDisplay extends FragmentActivity implements
 			super.onCreateView(inflater, container, savedInstanceState);
 			Log.i("aaa", "Called");
 
-			View rootView = inflater.inflate(R.layout.image_viewer_section,
+			View rootView = inflater.inflate(R.layout.information_selection_layout,
 					container, false);
 			RelativeLayout imageViewerSectionLayout = (RelativeLayout) rootView;
 
@@ -316,6 +318,28 @@ public class MovementDataDisplay extends FragmentActivity implements
 
 				}
 			});
+			return imageViewerSectionLayout;
+		}
+	}
+	
+	@SuppressLint("ValidFragment")
+	public class ImageViewSectionFragment extends Fragment {
+		public ImageViewSectionFragment() {
+		}
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+			super.onCreateView(inflater, container, savedInstanceState);
+			Log.i("aaa", "Called");
+
+			View rootView = inflater.inflate(R.layout.image_viewer_section,
+					container, false);
+			RelativeLayout imageViewerSectionLayout = (RelativeLayout) rootView;
+
+			final ImageView imageView = (ImageView) imageViewerSectionLayout
+					.findViewById(R.id.test_image);
+			
 			return imageViewerSectionLayout;
 		}
 	}
