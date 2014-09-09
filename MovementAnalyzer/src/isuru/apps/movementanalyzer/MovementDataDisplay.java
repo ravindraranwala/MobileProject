@@ -1,18 +1,18 @@
 package isuru.apps.movementanalyzer;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 
-import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.apps.movementanalyzer.city.City;
 import android.apps.movementanalyzer.data.provider.LocationDataProvider;
+import android.apps.movementanalyzer.eventListners.ImageSourceChangeListner;
+import android.apps.movementanalyzer.eventListners.LocationChangeListener;
+import android.apps.movementanalyzer.eventObjects.ImageSourceChangeEvent;
+import android.apps.movementanalyzer.eventObjects.LocationChangeEvent;
 import android.apps.movementanalyzer.img.util.ImageUtil;
 import android.apps.movementanalyzer.location.type.LocationType;
 import android.apps.movementanalyzer.model.GeographicLocation;
-import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,22 +20,11 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MovementDataDisplay extends FragmentActivity implements
 		ActionBar.TabListener {
@@ -59,6 +48,16 @@ public class MovementDataDisplay extends FragmentActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		// Instantiate the client data provider class here.
+		dataProvider = new LocationDataProvider(this);
+		// Drop the existing table before re-creating.
+		dataProvider.dropLocationTable();
+		// Then recreate the table.
+		dataProvider.createLocationTable();
+		// Then load some sample location data into the table.
+		loadLocationData();
+		
 		setContentView(R.layout.activity_movement_data_display);
 
 		// Set up the action bar.
@@ -96,35 +95,7 @@ public class MovementDataDisplay extends FragmentActivity implements
 					.setTabListener(this));
 		}
 
-		// Instantiate the client data provider class here.
-		dataProvider = new LocationDataProvider(this);
-		// Drop the existing table before re-creating.
-		dataProvider.dropLocationTable();
-		// Then recreate the table.
-		dataProvider.createLocationTable();
-		// Then load some sample location data into the table.
-		loadLocationData();
-
-		// Add action listners
-		// addBottonClickListners();
-
 	}
-
-	/*
-	 * private void addBottonClickListners() { RelativeLayout coordMan =
-	 * (RelativeLayout) View.inflate(this,
-	 * R.layout.coordinate_manager_section_layout, null); RadioGroup
-	 * choiseSelectionGrp = (RadioGroup)
-	 * coordMan.findViewById(R.id.radioLocationSelectionMethod); Button
-	 * coordinateSendButton = (Button)
-	 * coordMan.findViewById(R.id.coordinateSendButton);
-	 * /*coordinateSendButton.setOnClickListener(new OnClickListener() {
-	 * 
-	 * @Override public void onClick(View v) { Log.i("aaa","Clicked");
-	 * //mViewPager.setCurrentItem(1); } });
-	 * 
-	 * }
-	 */
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -157,23 +128,45 @@ public class MovementDataDisplay extends FragmentActivity implements
 	 */
 	public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
+		
+		private CoordinateManagerSectionFragment coordinateManagerSectionFragment;
+		private InformationSelectionFragment informationSelectionFragment;
+		private ImageViewSectionFragment imageViewSectionFragment;
 		public SectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
+			coordinateManagerSectionFragment = new CoordinateManagerSectionFragment();
+			informationSelectionFragment = new InformationSelectionFragment(dataProvider, getApplicationContext());
+			imageViewSectionFragment = new ImageViewSectionFragment();
+			
+			coordinateManagerSectionFragment.setLocationChangeListener(new LocationChangeListener() {				
+				@Override
+				public void LocationChangeEventOccured(LocationChangeEvent lce) {
+					mViewPager.setCurrentItem(1);
+					informationSelectionFragment.updateInformation(lce.getLatitude(), lce.getLongitude());
+				}
+			});
+			
+			informationSelectionFragment.setImageSourceChangeListner(new ImageSourceChangeListner() {
+				@Override
+				public void imageSourceChangeOccured(ImageSourceChangeEvent ise) {
+					mViewPager.setCurrentItem(2);
+					imageViewSectionFragment.updateImage(ise.getImageSource());
+				}
+			});
 		}
 
 		@Override
 		public Fragment getItem(int position) {
 			// getItem is called to instantiate the fragment for the given page.
-			// Return a DummySectionFragment (defined as a static inner class
-			// below) with the page number as its lone argument.
 
 			Fragment fragment = null;
+			
 			if (position == 0) {
-				fragment = new CoordinateManagerSectionFragment(mViewPager);
+				fragment = this.coordinateManagerSectionFragment;
 			} else if (position == 1) {
-				fragment = new InformationSelectionFragment();
+				fragment = this.informationSelectionFragment;
 			} else if (position == 2) {
-				fragment = new ImageViewSectionFragment();
+				fragment = this.imageViewSectionFragment;
 			} else {
 				fragment = new DummySectionFragment();
 			}
@@ -232,142 +225,9 @@ public class MovementDataDisplay extends FragmentActivity implements
 		}
 	}
 
-	@SuppressLint("ValidFragment")
-	public class InformationSelectionFragment extends Fragment {
-		public InformationSelectionFragment() {
-		}
 
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			super.onCreateView(inflater, container, savedInstanceState);
-			Log.i("aaa", "Called");
-
-			View rootView = inflater.inflate(R.layout.information_selection_layout,
-					container, false);
-			RelativeLayout imageViewerSectionLayout = (RelativeLayout) rootView;
-
-			final ImageView imageView = (ImageView) imageViewerSectionLayout
-					.findViewById(R.id.test_image);
-			Button buttonTestImage = (Button) imageViewerSectionLayout
-					.findViewById(R.id.button1);
-
-			final List<GeographicLocation> locationByCity = MovementDataDisplay.this.dataProvider
-					.getLocationByCity(City.COLOMBO.getCity());
-			buttonTestImage.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-
-					Log.i("aaa", "Clicked: ");
-					// imageView.setImageResource(R.drawable.ic_launcher);
-
-					GeographicLocation location = locationByCity.get(0);
-					imageView.setImageBitmap(location.getBitmapImage());
-					imageView.buildLayer();
-				}
-			});
-
-			// Spinners
-			// Location Spinner
-			Spinner spinnerLocation = (Spinner) imageViewerSectionLayout
-					.findViewById(R.id.spinner1);
-			Spinner spinnerCatagory = (Spinner) imageViewerSectionLayout
-					.findViewById(R.id.spinner2);
-
-			String[] locationList = { City.COLOMBO.getCity(),
-					City.MASSACHUSETTS.getCity() };
-			ArrayAdapter<String> sp1Adaptor = new ArrayAdapter<String>(
-					inflater.getContext(),
-					android.R.layout.simple_spinner_dropdown_item, locationList);
-			spinnerLocation.setAdapter(sp1Adaptor);
-
-			// Catogory Spinner
-			String[] catogoryList = {
-					LocationType.RAILWAY_STATION.getLocationCategory(),
-					LocationType.HOSPITAL.getLocationCategory() };
-			ArrayAdapter<String> sp2Adaptor = new ArrayAdapter<String>(
-					inflater.getContext(),
-					android.R.layout.simple_spinner_dropdown_item, catogoryList);
-			spinnerCatagory.setAdapter(sp2Adaptor);
-
-			// ListView1
-			ListView listView = (ListView) imageViewerSectionLayout
-					.findViewById(R.id.listView1);
-			LocationArrayAdapter locationAdapter = new LocationArrayAdapter(
-					inflater.getContext(),
-					android.R.layout.simple_dropdown_item_1line, locationByCity);
-
-			listView.setAdapter(locationAdapter);
-
-			listView.setOnItemClickListener(new OnItemClickListener() {
-
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view,
-						int position, long id) {
-					Toast.makeText(getApplicationContext(),
-							"Click ListItem Number " + position,
-							Toast.LENGTH_LONG).show();
-
-					/*
-					 * Render the image associated with the selected location
-					 * here.
-					 */
-					imageView.setImageBitmap(locationByCity.get(position)
-							.getBitmapImage());
-
-				}
-			});
-			return imageViewerSectionLayout;
-		}
-	}
 	
-	@SuppressLint("ValidFragment")
-	public class ImageViewSectionFragment extends Fragment {
-		public ImageViewSectionFragment() {
-		}
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			super.onCreateView(inflater, container, savedInstanceState);
-			Log.i("aaa", "Called");
-
-			View rootView = inflater.inflate(R.layout.image_viewer_section,
-					container, false);
-			RelativeLayout imageViewerSectionLayout = (RelativeLayout) rootView;
-
-			final ImageView imageView = (ImageView) imageViewerSectionLayout
-					.findViewById(R.id.test_image);
-			
-			return imageViewerSectionLayout;
-		}
-	}
-
-	public class LocationArrayAdapter extends ArrayAdapter<GeographicLocation> {
-		HashMap<GeographicLocation, Integer> mIdMap = new HashMap<GeographicLocation, Integer>();
-
-		public LocationArrayAdapter(Context context, int resource,
-				List<GeographicLocation> objects) {
-			super(context, resource, objects);
-			for (int i = 0; i < objects.size(); ++i) {
-				mIdMap.put(objects.get(i), i);
-			}
-		}
-
-		@Override
-		public long getItemId(int position) {
-			GeographicLocation location = getItem(position);
-			return mIdMap.get(location);
-		}
-
-		@Override
-		public boolean hasStableIds() {
-			return true;
-		}
-
-	}
-
+	// TODO Time to remove this from here and add a populate sample data set to a separate class
 	private void loadLocationData() {
 		Resources res = getResources();
 		byte[] bitMapData = ImageUtil.getImageByteData(res
@@ -395,25 +255,4 @@ public class MovementDataDisplay extends FragmentActivity implements
 		// production.
 		dataProvider.getLocationByCity(City.COLOMBO.getCity());
 	}
-
-	/*
-	 * public static class CoordinateManagerSectionFragment1 extends Fragment {
-	 * // /** // * The fragment argument representing the section number for
-	 * this // * fragment. // * public static final String ARG_SECTION_NUMBER =
-	 * "section_number";
-	 * 
-	 * public CoordinateManagerSectionFragment1() { }
-	 * 
-	 * @Override public View onCreateView(LayoutInflater inflater, ViewGroup
-	 * container, Bundle savedInstanceState) { View rootView =
-	 * inflater.inflate(R.layout.coordinate_manager_section_layout, container,
-	 * false); Button selectButton = (Button)
-	 * rootView.findViewById(R.id.coordinateSendButton123);
-	 * selectButton.setText("GO!!!"); selectButton.setOnClickListener(new
-	 * OnClickListener() {
-	 * 
-	 * @Override public void onClick(View v) { Log.i("aaa","Clicked");
-	 * mViewPager.setCurrentItem(1); } }); return rootView; } }
-	 */
-
 }

@@ -1,6 +1,7 @@
 package isuru.apps.movementanalyzer;
 
-import isuru.apps.movementanalyzer.R;
+import android.apps.movementanalyzer.eventListners.LocationChangeListener;
+import android.apps.movementanalyzer.eventObjects.LocationChangeEvent;
 import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
@@ -8,7 +9,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +26,7 @@ public class CoordinateManagerSectionFragment extends Fragment implements Locati
      * fragment.
      */
     public static final String ARG_SECTION_NUMBER = "section_number";
-    private ViewPager mViewPager;
+    private LocationChangeListener locationChangeListener;
 	private LocationManager locationManager;
 	public Location lastKnownLocation;
 	private LocationManagmentMethod locationManagementMethod = LocationManagmentMethod.GPS;
@@ -38,8 +38,7 @@ public class CoordinateManagerSectionFragment extends Fragment implements Locati
 	private EditText textLongitude;
 	
     
-    public CoordinateManagerSectionFragment(ViewPager viewPager) {
-    	this.mViewPager = viewPager;
+    public CoordinateManagerSectionFragment() {
     }
 
     @Override
@@ -58,8 +57,10 @@ public class CoordinateManagerSectionFragment extends Fragment implements Locati
 			@Override
 			public void onClick(View v) {
 				Log.i("aaa","Clicked");
-				mViewPager.setCurrentItem(1);
+				//mViewPager.setCurrentItem(1);
+				triggerLocationChangeEvent();
 			}
+
 		});
 
     	choiceSelectionGroup = (RadioGroup) coordManSectionLayout.findViewById(R.id.radioLocationSelectionMethod);
@@ -85,7 +86,28 @@ public class CoordinateManagerSectionFragment extends Fragment implements Locati
         return coordManSectionLayout;
     }
     
+    public void setLocationChangeListener(LocationChangeListener listener){
+    	this.locationChangeListener = listener;
+    }
     
+    public LocationChangeListener getLocationChangeListener(){
+    	return this.locationChangeListener;
+    }
+
+	private void triggerLocationChangeEvent() {
+		if(this.locationChangeListener != null){
+			LocationChangeEvent lce = new LocationChangeEvent(this);
+			try{
+				Double latitude = Double.valueOf(textLatitude.getText().toString());
+				Double longitude = Double.valueOf(textLongitude.getText().toString());
+				lce.setLatitude(latitude);
+				lce.setLongitude(longitude);
+				this.locationChangeListener.LocationChangeEventOccured(lce);
+			}catch(NumberFormatException ex){
+				Log.e("NumberFOrmatError", ex.getMessage());
+			}
+		}
+	}
     // LocationListener methods and implementation
     
 	protected void setTestBoxesEnabled(boolean enabled) {

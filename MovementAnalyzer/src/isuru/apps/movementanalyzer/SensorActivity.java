@@ -40,10 +40,10 @@ public class SensorActivity extends Activity implements SensorEventListener {
 		// You'd get accelerometer values like this:
 		if (event.sensor.getType() != Sensor.TYPE_ACCELEROMETER)
 			return;
-		float mSensorX, mSensorY;
+//		float mSensorX, mSensorY;
 		// //
-		mSensorX = event.values[0];
-		mSensorY = event.values[1];
+//		mSensorX = event.values[0];
+//		mSensorY = event.values[1];
 		// //
 		/*
 		 * switch (mDisplay.getRotation()) { case Surface.ROTATION_0: mSensorX =

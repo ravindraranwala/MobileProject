@@ -9,18 +9,8 @@
         android:id="@+id/gridLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/test_image"
         android:layout_alignParentRight="true" >
     </GridLayout>
-
-    <ImageView
-        android:id="@+id/test_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:adjustViewBounds="true"
-        android:src="@drawable/test" />
 
     <Button
         android:id="@+id/button1"
@@ -54,10 +44,8 @@
         android:id="@+id/listView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/test_image"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/spinner2" >
-
     </ListView>
 
 </RelativeLayout>
