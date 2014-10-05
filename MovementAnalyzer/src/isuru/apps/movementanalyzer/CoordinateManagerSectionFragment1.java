@@ -152,8 +152,8 @@ public class CoordinateManagerSectionFragment1 extends Fragment implements Locat
 	        if(provider == null){
 	        	Log.e("GPS", "No providers found");
 	        	lastKnownLocation = new Location("Manual");
-				double latitude = 2.345689;
-				double longitude = 45.4567806;
+				double latitude = 6.92707860;
+				double longitude = 79.86124300;
 				lastKnownLocation.setLatitude(latitude);
 				lastKnownLocation.setLongitude(longitude);
 	        	break;
@@ -166,8 +166,8 @@ public class CoordinateManagerSectionFragment1 extends Fragment implements Locat
 			break;
 		case MANUAL_COORDINATES:
 			lastKnownLocation = new Location("Manual");
-			double latitude = 2.345689;
-			double longitude = 45.4567806;
+			double latitude = 6.92707860;
+			double longitude = 79.86124300;
 			lastKnownLocation.setLatitude(latitude);
 			lastKnownLocation.setLongitude(longitude);
 			break;
