@@ -43,6 +43,7 @@ public class InformationSelectionFragment extends Fragment {
 	ListView listView;
 
 	List<GeographicLocation> geoLocationsList = new ArrayList<GeographicLocation>();
+	List<GeographicLocation> listViewGeoLocationsList = new ArrayList<GeographicLocation>();
 	String selectedCity = "All";
 	String selectedCatogory = "All";
 
@@ -201,7 +202,7 @@ public class InformationSelectionFragment extends Fragment {
 				/*
 				 * Render the image associated with the selected location here.
 				 */
-				triggerImageSourceChangeEvent(filteredGeoLocationsList.get(
+				triggerImageSourceChangeEvent(InformationSelectionFragment.this.listViewGeoLocationsList.get(
 						position).getBitmapImage());
 
 			}
@@ -233,6 +234,7 @@ public class InformationSelectionFragment extends Fragment {
 					android.R.layout.simple_dropdown_item_1line,
 					filteredGeoLocationsList);
 			listView.setAdapter(locationAdapter);
+			this.listViewGeoLocationsList = filteredGeoLocationsList;
 		}
 	}
 
