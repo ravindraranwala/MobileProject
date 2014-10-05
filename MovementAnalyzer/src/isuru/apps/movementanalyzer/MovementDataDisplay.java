@@ -56,7 +56,7 @@ public class MovementDataDisplay extends FragmentActivity implements
 		// Then recreate the table.
 		dataProvider.createLocationTable();
 		// Then load some sample location data into the table.
-		// loadLocationData();
+		loadLocationData();
 		
 		setContentView(R.layout.activity_movement_data_display);
 
