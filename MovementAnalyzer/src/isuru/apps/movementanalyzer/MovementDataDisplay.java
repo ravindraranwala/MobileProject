@@ -129,12 +129,12 @@ public class MovementDataDisplay extends FragmentActivity implements
 	public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
 		
-		private CoordinateManagerSectionFragment coordinateManagerSectionFragment;
+		private CoordinateManagerSectionFragment1 coordinateManagerSectionFragment;
 		private InformationSelectionFragment informationSelectionFragment;
 		private ImageViewSectionFragment imageViewSectionFragment;
 		public SectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
-			coordinateManagerSectionFragment = new CoordinateManagerSectionFragment();
+			coordinateManagerSectionFragment = new CoordinateManagerSectionFragment1();
 			informationSelectionFragment = new InformationSelectionFragment(dataProvider, getApplicationContext());
 			imageViewSectionFragment = new ImageViewSectionFragment();
 			
