@@ -196,9 +196,9 @@ public class InformationSelectionFragment extends Fragment {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				Toast.makeText(applicationContext,
+				/*Toast.makeText(applicationContext,
 						"Click ListItem Number " + position, Toast.LENGTH_LONG)
-						.show();
+						.show();*/
 				/*
 				 * Render the image associated with the selected location here.
 				 */
