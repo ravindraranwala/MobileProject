@@ -32,12 +32,9 @@ public class InformationSelectionFragment  extends Fragment{
 	
 	private ImageSourceChangeListner imageSourceChangeListner;
 	private LocationDataProvider dataProvider;
-	
-	// Adding this just to support temporary alert message. This property is
-	// NOT required for final functionality
-	Context applicationContext;
-	
+		
 	RelativeLayout informationSelectionLayout;
+	Context applicationContext;
 
 	public InformationSelectionFragment(LocationDataProvider dataProvider, Context applicationContext) {
     	this.dataProvider = dataProvider;
@@ -49,79 +46,10 @@ public class InformationSelectionFragment  extends Fragment{
 			Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 		Log.i("aaa", "Called");
-
 		View rootView = inflater.inflate(R.layout.information_selection_layout,
 				container, false);
 		this.informationSelectionLayout = (RelativeLayout) rootView;
-
-		Button buttonTestImage = (Button) informationSelectionLayout
-				.findViewById(R.id.button1);
-
-		final List<GeographicLocation> locationByCity = this.dataProvider
-				.getLocationByCity(City.COLOMBO.getCity());
-		/*buttonTestImage.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-
-				Log.i("aaa", "Clicked: ");
-				// imageView.setImageResource(R.drawable.ic_launcher);
-
-				GeographicLocation location = locationByCity.get(0);
-				triggerImageSourceChangeEvent(location.getBitmapImage());
-			}
-		});*/
-
-		// Spinners
-		// Location Spinner
-		Spinner spinnerLocation = (Spinner) informationSelectionLayout
-				.findViewById(R.id.spinner1);
-		Spinner spinnerCatagory = (Spinner) informationSelectionLayout
-				.findViewById(R.id.spinner2);
-
-		String[] locationList = { City.COLOMBO.getCity(),
-				City.MASSACHUSETTS.getCity() };
-		ArrayAdapter<String> sp1Adaptor = new ArrayAdapter<String>(
-				inflater.getContext(),
-				android.R.layout.simple_spinner_dropdown_item, locationList);
-		spinnerLocation.setAdapter(sp1Adaptor);
-
-		// Catogory Spinner
-		String[] catogoryList = {
-				LocationType.RAILWAY_STATION.getLocationCategory(),
-				LocationType.HOSPITAL.getLocationCategory() };
-		ArrayAdapter<String> sp2Adaptor = new ArrayAdapter<String>(
-				inflater.getContext(),
-				android.R.layout.simple_spinner_dropdown_item, catogoryList);
-		spinnerCatagory.setAdapter(sp2Adaptor);
-
-		// ListView1
-		ListView listView = (ListView) informationSelectionLayout
-				.findViewById(R.id.listView1);
-		LocationArrayAdapter locationAdapter = new LocationArrayAdapter(
-				inflater.getContext(),
-				android.R.layout.simple_dropdown_item_1line, locationByCity);
-
-		listView.setAdapter(locationAdapter);
-
-		listView.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				Toast.makeText(applicationContext,
-						"Click ListItem Number " + position,
-						Toast.LENGTH_LONG).show();
-
-				/*
-				 * Render the image associated with the selected location
-				 * here.
-				 */
-				triggerImageSourceChangeEvent(locationByCity.get(position)
-						.getBitmapImage());
-
-			}
-		});
+		this.applicationContext = inflater.getContext();
 		return informationSelectionLayout;
 	}
 	
