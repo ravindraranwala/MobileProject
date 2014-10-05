@@ -169,12 +169,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getReadableDatabase();
 
 		Cursor cursor = db
-				.query(TABLE_LOCATIONS, new String[] { KEY_ID, KEY_LATITUDE,
-						KEY_LONGITUDE, KEY_CITY, KEY_LOCATION_TYPE,
-						KEY_LOCATION_DESCRIPTION, KEY_IMAGE }, KEY_LATITUDE
-						+ " =?" + AND + KEY_LONGITUDE + " =?", new String[] {
-						String.valueOf(latitude), String.valueOf(longitude) },
-						null, null, null);
+				.query(TABLE_LOCATIONS,
+						new String[] { KEY_ID, KEY_LATITUDE, KEY_LONGITUDE,
+								KEY_CITY, KEY_LOCATION_TYPE,
+								KEY_LOCATION_DESCRIPTION, KEY_IMAGE },
+						KEY_LATITUDE + " BETWEEN ? AND ?" + AND + KEY_LONGITUDE
+								+ " BETWEEN ? AND ?",
+						new String[] { String.valueOf(latitude - 0.1),
+								String.valueOf(latitude + 0.1),
+								String.valueOf(longitude - 0.1),
+								String.valueOf(longitude + 0.1) }, null, null,
+						null);
 
 		// looping through all rows and adding to list
 		if (cursor.moveToFirst()) {
