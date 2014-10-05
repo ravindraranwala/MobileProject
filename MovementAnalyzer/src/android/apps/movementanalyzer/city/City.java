@@ -8,7 +8,7 @@ package android.apps.movementanalyzer.city;
  * 
  */
 public enum City {
-	COLOMBO("Colombo"), MASSACHUSETTS("Massachusetts");
+	COLOMBO("Colombo"), MASSACHUSETTS("Massachusetts"), MORATUWA("Moratuwa");
 
 	private final String city;
 

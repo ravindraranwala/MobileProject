@@ -10,7 +10,8 @@ package android.apps.movementanalyzer.location.type;
  */
 public enum LocationType {
 	RAILWAY_STATION("Railway Station"), BUS_STAND("Bus Stand"), SUPER_MARKET(
-			"Super Market"), HOTEL("Hotels"), HOSPITAL("Hospital");
+			"Super Market"), HOTEL("Hotels"), HOSPITAL("Hospital"), UNIVERSITY(
+			"University");
 
 	private final String locationCategory;
 
