@@ -4,16 +4,12 @@ import java.util.Locale;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
-import android.apps.movementanalyzer.city.City;
+import android.apps.movementanalyzer.data.loader.LocationDataLoader;
 import android.apps.movementanalyzer.data.provider.LocationDataProvider;
 import android.apps.movementanalyzer.eventListners.ImageSourceChangeListner;
 import android.apps.movementanalyzer.eventListners.LocationChangeListener;
 import android.apps.movementanalyzer.eventObjects.ImageSourceChangeEvent;
 import android.apps.movementanalyzer.eventObjects.LocationChangeEvent;
-import android.apps.movementanalyzer.img.util.ImageUtil;
-import android.apps.movementanalyzer.location.type.LocationType;
-import android.apps.movementanalyzer.model.GeographicLocation;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -48,7 +44,7 @@ public class MovementDataDisplay extends FragmentActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		// Instantiate the client data provider class here.
 		dataProvider = new LocationDataProvider(this);
 		// Drop the existing table before re-creating.
@@ -56,8 +52,8 @@ public class MovementDataDisplay extends FragmentActivity implements
 		// Then recreate the table.
 		dataProvider.createLocationTable();
 		// Then load some sample location data into the table.
-		loadLocationData();
-		
+		LocationDataLoader.loadData(dataProvider, getResources());
+
 		setContentView(R.layout.activity_movement_data_display);
 
 		// Set up the action bar.
@@ -128,31 +124,38 @@ public class MovementDataDisplay extends FragmentActivity implements
 	 */
 	public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-		
 		private CoordinateManagerSectionFragment1 coordinateManagerSectionFragment;
 		private InformationSelectionFragment informationSelectionFragment;
 		private ImageViewSectionFragment imageViewSectionFragment;
+
 		public SectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
 			coordinateManagerSectionFragment = new CoordinateManagerSectionFragment1();
-			informationSelectionFragment = new InformationSelectionFragment(dataProvider, getApplicationContext());
+			informationSelectionFragment = new InformationSelectionFragment(
+					dataProvider, getApplicationContext());
 			imageViewSectionFragment = new ImageViewSectionFragment();
-			
-			coordinateManagerSectionFragment.setLocationChangeListener(new LocationChangeListener() {				
-				@Override
-				public void LocationChangeEventOccured(LocationChangeEvent lce) {
-					mViewPager.setCurrentItem(1);
-					informationSelectionFragment.updateInformation(lce.getLatitude(), lce.getLongitude());
-				}
-			});
-			
-			informationSelectionFragment.setImageSourceChangeListner(new ImageSourceChangeListner() {
-				@Override
-				public void imageSourceChangeOccured(ImageSourceChangeEvent ise) {
-					mViewPager.setCurrentItem(2);
-					imageViewSectionFragment.updateImage(ise.getImageSource());
-				}
-			});
+
+			coordinateManagerSectionFragment
+					.setLocationChangeListener(new LocationChangeListener() {
+						@Override
+						public void LocationChangeEventOccured(
+								LocationChangeEvent lce) {
+							mViewPager.setCurrentItem(1);
+							informationSelectionFragment.updateInformation(
+									lce.getLatitude(), lce.getLongitude());
+						}
+					});
+
+			informationSelectionFragment
+					.setImageSourceChangeListner(new ImageSourceChangeListner() {
+						@Override
+						public void imageSourceChangeOccured(
+								ImageSourceChangeEvent ise) {
+							mViewPager.setCurrentItem(2);
+							imageViewSectionFragment.updateImage(ise
+									.getImageSource());
+						}
+					});
 		}
 
 		@Override
@@ -160,7 +163,7 @@ public class MovementDataDisplay extends FragmentActivity implements
 			// getItem is called to instantiate the fragment for the given page.
 
 			Fragment fragment = null;
-			
+
 			if (position == 0) {
 				fragment = this.coordinateManagerSectionFragment;
 			} else if (position == 1) {
@@ -223,36 +226,5 @@ public class MovementDataDisplay extends FragmentActivity implements
 					ARG_SECTION_NUMBER)));
 			return rootView;
 		}
-	}
-
-
-	
-	// TODO Time to remove this from here and add a populate sample data set to a separate class
-	private void loadLocationData() {
-		Resources res = getResources();
-		byte[] bitMapData = ImageUtil.getImageByteData(res
-				.getDrawable(R.drawable.ic_launcher_web));
-
-		byte[] hospital = ImageUtil.getImageByteData(res
-				.getDrawable(R.drawable.test));
-
-		// Constructing the necessary sample data to persist in the DB.
-		dataProvider.addLocation(new GeographicLocation(6.92707860,
-				79.86124300, City.COLOMBO.getCity(), bitMapData,
-				LocationType.RAILWAY_STATION.getLocationCategory(),
-				"Fort Railway Station."));
-		dataProvider.addLocation(new GeographicLocation(6.92707860,
-				79.86124300, City.COLOMBO.getCity(), hospital,
-				LocationType.HOSPITAL.getLocationCategory(),
-				"National Hospital."));
-		dataProvider.addLocation(new GeographicLocation(42.40721070,
-				-71.38243740, City.MASSACHUSETTS.getCity(), bitMapData,
-				LocationType.RAILWAY_STATION.getLocationCategory(),
-				"Massachusetts Railway Station."));
-
-		// TODO: This is just used to verify that the functionality is working
-		// properly. Later on you may remove that when the system is put in the
-		// production.
-		dataProvider.getLocationByCity(City.COLOMBO.getCity());
 	}
 }
