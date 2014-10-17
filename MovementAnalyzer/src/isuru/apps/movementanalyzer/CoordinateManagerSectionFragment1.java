@@ -191,7 +191,7 @@ public class CoordinateManagerSectionFragment1 extends Fragment implements Locat
 			break;
 		case MANUAL:
 			lastKnownLocation = new Location("Manual");
-			double latitude = 6.92707860;
+			double latitude = 6.82707860;
 			double longitude = 79.86124300;
 			lastKnownLocation.setLatitude(latitude);
 			lastKnownLocation.setLongitude(longitude);
@@ -200,7 +200,7 @@ public class CoordinateManagerSectionFragment1 extends Fragment implements Locat
 			break;
 		
 		}
-		if(textLatitude!=null && textLongitude!=null){
+		if(textLatitude!=null && textLongitude!=null && lastKnownLocation!=null){
 			String latitude = String.valueOf(nf.format(lastKnownLocation.getLatitude()));
 			String longitude = String.valueOf(nf.format(lastKnownLocation.getLongitude()));
 			textLatitude.setText(latitude);
