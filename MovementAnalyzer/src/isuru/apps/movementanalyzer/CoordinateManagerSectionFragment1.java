@@ -1,5 +1,7 @@
 package isuru.apps.movementanalyzer;
 
+import java.text.NumberFormat;
+
 import android.apps.movementanalyzer.eventListners.LocationChangeListener;
 import android.apps.movementanalyzer.eventObjects.LocationChangeEvent;
 import android.content.Context;
@@ -19,6 +21,7 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 public class CoordinateManagerSectionFragment1 extends Fragment implements LocationListener {
 	/**
@@ -29,14 +32,16 @@ public class CoordinateManagerSectionFragment1 extends Fragment implements Locat
     private LocationChangeListener locationChangeListener;
 	private LocationManager locationManager;
 	public Location lastKnownLocation;
-	private LocationManagmentMethod1 locationManagementMethod = LocationManagmentMethod1.GPS;
+	private LocationManagmentMethod1 locationManagementMethod = LocationManagmentMethod1.AUTO;
 	
 	RelativeLayout coordManSectionLayout;
 	private RadioGroup choiceSelectionGroup;
 	private Button coordinateSendButton;
 	private EditText textLatitude;
 	private EditText textLongitude;
+	private NumberFormat nf = NumberFormat.getInstance();
 	
+	Context applicationContext;
     
     public CoordinateManagerSectionFragment1() {
     }
@@ -44,9 +49,10 @@ public class CoordinateManagerSectionFragment1 extends Fragment implements Locat
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+    	nf.setMaximumFractionDigits(6);
         // Initialize location listener so that the current location will start getting updated
     	initializeLocationListner();
-    	
+    	applicationContext = inflater.getContext();
     	// Populate the local variables
         View rootView = inflater.inflate(R.layout.coordinate_manager_section_layout, container, false);
         coordManSectionLayout = (RelativeLayout)rootView;
@@ -76,11 +82,11 @@ public class CoordinateManagerSectionFragment1 extends Fragment implements Locat
 			public void onCheckedChanged(RadioGroup group, int checkedId) {
 				switch(checkedId){
 				case R.id.radioButton1: // GPS
-					locationManagementMethod = LocationManagmentMethod1.GPS;
+					locationManagementMethod = LocationManagmentMethod1.AUTO;
 					setTestBoxesEnabled(false);
 					break;
 				case R.id.radioButton2: // Manual
-					locationManagementMethod = LocationManagmentMethod1.MANUAL_COORDINATES;
+					locationManagementMethod = LocationManagmentMethod1.MANUAL;
 					setTestBoxesEnabled(true);
 					break;
 				default:
@@ -123,9 +129,12 @@ public class CoordinateManagerSectionFragment1 extends Fragment implements Locat
 	}
 	
 	private void updateTextBoxes(){
-		if(locationManagementMethod.equals(LocationManagmentMethod.GPS)){
-			textLatitude.setText(Double.valueOf(lastKnownLocation.getLatitude()).toString());
-			textLongitude.setText(Double.valueOf(lastKnownLocation.getLongitude()).toString());
+		Log.i("TextBoxes", "Updating with data:" + locationManagementMethod.equals(LocationManagmentMethod1.AUTO) + lastKnownLocation.getLatitude() + ":" + lastKnownLocation.getLongitude());
+		if(locationManagementMethod.equals(LocationManagmentMethod1.AUTO)){
+			String latitude = nf.format(Double.valueOf(lastKnownLocation.getLatitude())).toString();
+			String longitude = nf.format(Double.valueOf(lastKnownLocation.getLongitude())).toString();
+			textLatitude.setText(latitude);
+			textLongitude.setText(longitude);
 		}
 	}
 
@@ -141,13 +150,18 @@ public class CoordinateManagerSectionFragment1 extends Fragment implements Locat
 	
 	private void updateLocation(){
 		switch(locationManagementMethod){
-		case GPS:
+		case AUTO:
 			Criteria c = new Criteria();
+			c.setAccuracy(Criteria.ACCURACY_MEDIUM);
 	        if(locationManager == null){
 	        	Log.e("GPS", "No locationManager found");
+	        	Toast.makeText(applicationContext,
+				"No locationManager found ", Toast.LENGTH_LONG)
+				.show();
 	        	return;
 	        }
 	        //it will check first satellite location than Internet and than Sim Network
+	        
 	        String provider = locationManager.getBestProvider(c, false);
 	        if(provider == null){
 	        	Log.e("GPS", "No providers found");
@@ -157,14 +171,25 @@ public class CoordinateManagerSectionFragment1 extends Fragment implements Locat
 				lastKnownLocation.setLatitude(latitude);
 				lastKnownLocation.setLongitude(longitude);
 	        	break;
+	        }else{
+	        	Log.i("GPS", "Provider: "+provider.toString());
 	        }
+	        try{
+		        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+	        }catch(IllegalArgumentException ex){}
+	        try{
+		        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+	        }catch(IllegalArgumentException ex){}
 	        Location location = locationManager.getLastKnownLocation(provider);
 	        if(location != null){
 	        	Log.i("GPS", location.toString());
 	        	lastKnownLocation = location;
+	        }else{
+	        	Log.e("GPS", "Location value null");
 	        }
+	        
 			break;
-		case MANUAL_COORDINATES:
+		case MANUAL:
 			lastKnownLocation = new Location("Manual");
 			double latitude = 6.92707860;
 			double longitude = 79.86124300;
@@ -176,8 +201,10 @@ public class CoordinateManagerSectionFragment1 extends Fragment implements Locat
 		
 		}
 		if(textLatitude!=null && textLongitude!=null){
-			textLatitude.setText(String.valueOf(lastKnownLocation.getLatitude()));
-			textLongitude.setText(String.valueOf(lastKnownLocation.getLongitude()));
+			String latitude = String.valueOf(nf.format(lastKnownLocation.getLatitude()));
+			String longitude = String.valueOf(nf.format(lastKnownLocation.getLongitude()));
+			textLatitude.setText(latitude);
+			textLongitude.setText(longitude);
 		}
 	}
     
@@ -210,5 +237,5 @@ public class CoordinateManagerSectionFragment1 extends Fragment implements Locat
 }
 
 enum LocationManagmentMethod1{
-	GPS, MANUAL_COORDINATES;
+	AUTO, MANUAL;
 }
